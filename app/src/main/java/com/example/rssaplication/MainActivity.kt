@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalProvider
@@ -39,19 +45,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        /*        val people = listOf(
-                    Person("Griff", "Halloran", 25),
-                    Person("Nik", "Skandaro", 29),
-                    Person("Ary", "Quil", 28),
-                    Person("Sen", "Fira", 30),
-                    Person("Biddy", "Blas", 18),
-                    Person("Lyren", "Shok", 17),
-                    Person("Soren", "Zaks", 20)
-                )*/
-
-        //val peopleFiltered = people.filter { it.age < 21 }
-
 
         val rssItems = listOf(
             RSSItem(
@@ -99,26 +92,49 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RSSAplicationTheme {
-                LazyColumn {
-                    items(rssItems) {
-                        when (it.type) {
-                            RSSType.TEXT -> {
-                                RSSItemText(it)
-                            }
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                    LazyColumn {
+                        items(rssItems) {
+                            when (it.type) {
+                                RSSType.TEXT -> {
+                                    RSSItemText(it)
+                                }
 
-                            RSSType.VIDEO -> {
-                                RSSItemVideo(it)
-                            }
+                                RSSType.VIDEO -> {
+                                    RSSItemVideo(it)
+                                }
 
-                            RSSType.Image -> {
-                                RSSItemImage(it)
+                                RSSType.Image -> {
+                                    RSSItemImage(it)
+                                }
                             }
                         }
                     }
+                    SearchBox()
                 }
             }
         }
     }
+}
+
+
+@Composable
+fun SearchBox() {
+    var searchQuery by remember { mutableStateOf("") }
+    TextField(
+        value = searchQuery,
+        onValueChange = {
+            searchQuery = it
+        },
+        singleLine = true,
+        label = {Text("Search")},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 100.dp)
+    )
 }
 
 @Composable
